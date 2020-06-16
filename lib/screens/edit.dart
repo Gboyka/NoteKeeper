@@ -4,9 +4,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class NoteEdit extends StatefulWidget{
+
+  String appBarTitle;
+
+  NoteEdit(String title) {
+    appBarTitle = title;
+  }
+
+
   @override
   State<StatefulWidget> createState() {
-    return NoteEditState();
+    return NoteEditState(appBarTitle);
+
 
   }
 
@@ -14,7 +23,8 @@ class NoteEdit extends StatefulWidget{
 
 class NoteEditState extends State<NoteEdit>{
 
-  // static var _priorities=['High','Medium','Low'];
+  String appBarTitle;
+NoteEditState(this.appBarTitle);
 
   TextEditingController title=TextEditingController();
   TextEditingController details=TextEditingController();
@@ -26,9 +36,21 @@ class NoteEditState extends State<NoteEdit>{
 
 
     TextStyle textStyle=Theme.of(context).textTheme.subtitle1;
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Edit Note',style:TextStyle()),
+    return WillPopScope(      //when we press the actual back back button
+        onWillPop: (){
+          moveToLastScreen();
+          return;// defined at last
+        },
+        child:Scaffold(
+        appBar: AppBar( //app bar back button
+          //by default back button is present with  goto back screen fucntion
+          leading: IconButton(icon:Icon(Icons.arrow_back),//  but we can also
+          onPressed: (){
+            moveToLastScreen();  //defined at last
+          }   //  add extra control and Functionality
+             ),
+
+          title: Text(appBarTitle,style:TextStyle()),
         ),
         body:Padding(
             padding:EdgeInsets.only(top:15.0,left:10.0,right:10.0),
@@ -121,7 +143,7 @@ class NoteEditState extends State<NoteEdit>{
                               padding: EdgeInsets.symmetric(vertical: 15.0,horizontal: 5.0),
                               color:Colors.white,
                               elevation: 8.0,
-                              splashColor: Colors.green,
+                              splashColor: Colors.black87,
                               textColor: Theme.of(context).primaryColorLight,
                               child: Icon(Icons.save,size: 50.0,color:Theme.of(context).primaryColor,),
                               shape: RoundedRectangleBorder(
@@ -157,8 +179,13 @@ class NoteEditState extends State<NoteEdit>{
               ],
             )
         )
+    )
     );
 
+  }
+
+  void moveToLastScreen(){
+    Navigator.pop(context);
   }
 
 

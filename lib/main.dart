@@ -10,7 +10,7 @@ void main() {
         theme:ThemeData(
             primarySwatch: Colors.teal //primary Color of the App
         ),
-        home:NoteEdit(), // Home Screen
+        home:NoteList(), // Home Screen
 
 
       )

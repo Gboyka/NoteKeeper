@@ -21,14 +21,15 @@ class NoteListState extends State<NoteList>{
           title:Text('Notes'),
         ),
         body:getNoteListView(), //Return listView
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: FloatingActionButton(
-            onPressed: (){
+              onPressed: (){
               //add on tapped
-
+              navigateToDetail("Add Note");
             },
-            backgroundColor: Colors.lightGreen,
+            backgroundColor: Colors.green,
             tooltip:'Add Note' ,
-            child:Icon(Icons.add)
+            child:Icon(Icons.add,size: 30.0,)
 
         )
     );
@@ -52,8 +53,9 @@ class NoteListState extends State<NoteList>{
               title: Text('Dummy Title',style:titleStyle,),
               subtitle: Text('Dummy Date'),
               trailing: Icon(Icons.delete,color: Colors.grey,),
-              onTap:(){                                  //move to edit screen on tap
-                //
+              //move to edit screen on tap
+              onTap:(){
+                navigateToDetail("Edit Note");  //defined in the end
               },
             )
 
@@ -63,5 +65,13 @@ class NoteListState extends State<NoteList>{
     );
   }
 
+  // open Note Edit Screen
+void navigateToDetail(String title){
+  Navigator.push(context,MaterialPageRoute(builder:(context){
+    return NoteEdit(title);
+  }
+  )
+  );
+}
 
 }
