@@ -45,9 +45,21 @@ columns(ID,Title,Description,Priority,Date).
 3.define  object conversion(Note<->Map) fucntions for map object to store and getch from database. NOTE OBJECT TO MAP OBJECT.
 
 
+# Database Helper Class
+Creating Singleton Object
+define INSERT,FETCH,DELETE,UPDATE functions. CRUD operations
 
+Sigleton Object->instance which will be initialized only once,throughout the lifecycle of our app. We use stastic key word.
 
+1.define and intialize all the database attributes,along with database table.
+2.create and intialize the database 
+3.create getter for database  -- returns old DB if exist or create new and return
+4.define CRUD operations
+    SQL queries can be passed using any of the following two methods, 
+    1) rawQuery,rawInsert,rawDelete,rawUpdate-- ('COMPLETE SQL QUERY')  
+    OR
+    2) query, insert , delete , update -- ('JUST PASS THE ARGUMENTS ')
 
-
+5. define a function to count total notes in our database.
 
 
