@@ -1,6 +1,7 @@
 // this is our second screen for editing the notes
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:notekeeper/screens/note_list.dart';
 import 'package:notekeeper/utils/db_helper.dart';
 import 'package:notekeeper/models/note.dart';
@@ -29,11 +30,17 @@ class NoteEditState extends State<NoteEdit> {
 
   TextEditingController title = TextEditingController();
   TextEditingController details = TextEditingController();
-  int _priority = 0;
+
+   DatabaseHelper helper=DatabaseHelper(); //singleton instance
+
 
   @override
   Widget build(BuildContext context) {
     TextStyle textStyle = Theme.of(context).textTheme.subtitle1;
+
+    title.text=note.title;                    //update textFields using controllers
+    details.text=note.description;
+
     return WillPopScope(
         //when we press the actual back back button
         onWillPop: () {
@@ -62,7 +69,9 @@ class NoteEditState extends State<NoteEdit> {
                       child: TextField(
                         controller: title,
                         style: textStyle,
-                        onChanged: (value) {},
+                        onChanged: (value) {
+                          updateTitle();
+                        },
                         decoration: InputDecoration(
                             labelText: 'Title',
                             labelStyle: textStyle,
@@ -77,7 +86,8 @@ class NoteEditState extends State<NoteEdit> {
                       child: TextField(
                         controller: details,
                         style: textStyle,
-                        onChanged: (value) {},
+                        onChanged: (value) {
+                          updateDescription();},
                         decoration: InputDecoration(
                             labelText: 'Details',
                             labelStyle: textStyle,
@@ -103,10 +113,10 @@ class NoteEditState extends State<NoteEdit> {
                             child: Radio(
                           activeColor: Colors.red,
                           value: 0,
-                          groupValue: _priority,
+                          groupValue: note.priority,
                           onChanged: (newValue) {
                             setState(() {
-                              _priority = 0;
+                              setPriority(newValue);
                             }
                             );
                           },
@@ -116,10 +126,10 @@ class NoteEditState extends State<NoteEdit> {
                             child: Radio(
                           activeColor: Colors.lightGreen,
                           value: 1,
-                          groupValue: _priority,
+                          groupValue: note.priority,
                           onChanged: (newValue) {
                             setState(() {
-                              _priority = 1;
+                              setPriority(newValue);
                             }
                             );
                           },
@@ -147,7 +157,7 @@ class NoteEditState extends State<NoteEdit> {
                                   shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(75.0),
                               ),
-                              onPressed: () {},
+                              onPressed: () {_save();},
                             )
                             ),
                             Container(
@@ -168,7 +178,7 @@ class NoteEditState extends State<NoteEdit> {
                               ),
                                   shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(75.0)),
-                              onPressed: () {},
+                              onPressed: () {_delete();},
                             )
                             ),
                           ],
@@ -182,6 +192,68 @@ class NoteEditState extends State<NoteEdit> {
   }
 
   void moveToLastScreen() {
-    Navigator.pop(context);
+    Navigator.pop(context,true); //move to home screen
   }
+
+  void updateTitle(){
+    note.title=title.text;
+  }
+  void updateDescription(){
+    note.description=details.text;
+  }
+
+  void _save() async{
+
+    moveToLastScreen();
+
+    note.date=DateFormat.yMMMd().format(DateTime.now());
+    int result;
+
+    if(note.id!=null){  //case 1: update operation existing note
+      result=await helper.updateNote(note);
+    }
+    else  //case 2: insert operation new note
+      {
+      result=await helper.insertNote(note);
+      }
+
+    if(result!=0) //success
+      _showAlert('Status', 'Saved Successfully');
+     else //failed
+      _showAlert('Status', 'Problem Saving Note');
+
+  }
+  void _showAlert(String title,String msg){
+      AlertDialog alertDialog=AlertDialog(
+        title:Text(title),
+        content: Text(msg),
+      );
+      showDialog(context: context,builder:(_)=>alertDialog );
+  }
+
+  void _delete() async{   //2 cases
+        //case1. deleting new node that has come after pressing FAB of homescreen
+        //case2. deleting existing note wiht valid ID.
+  moveToLastScreen();
+    if(note.id==null){
+      _showAlert('Status','Oops!No Note Deleted' );
+    }
+
+    int result=await helper.deleteNote(note.id);
+  if(result!=0)
+    _showAlert('Status','Deleted !' );
+  else
+    _showAlert("Status", 'Something Wrong.!');
+
+  }
+
+  void setPriority(int val)
+  {
+    if(val==1)
+      note.priority=1;
+    else
+      note.priority=0;
+  }
+
+
 }

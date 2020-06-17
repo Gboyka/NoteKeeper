@@ -89,10 +89,13 @@ class NoteListState extends State<NoteList> {
   }
 
   // open Note Edit Screen
-  void navigateToDetail(Note note,String title) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
+  void navigateToDetail(Note note,String title) async{
+    bool result=await Navigator.push(context, MaterialPageRoute(builder: (context) {
       return NoteEdit(note,title);
     }));
+    if(result)
+      updateListView();
+
   }
 
   //returns priority color
