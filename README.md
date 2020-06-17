@@ -72,7 +72,16 @@ Define priority functions to change color and icons of note according to priorit
 Define  delete and updateListview function using dbHelper functions
 
 Define a function in dbHelper to convert Map List to Note List to fetch the notes to show it on home screen.
+Modify the navigationTodetail function add a note obejct as parameter.
+change all the function's signature associated with it.
 
-# Implement Navgation and Edit Screen functionality
-Modify the navigationTodetail function add a note obejct as parameter
+# Edit Screen functionality
+Set priority using radio buttons.
+Using text controllers update both the text fields
+Insert or delete the Note,according to user response.
+Always move back to previous screen after performing an operation.
+
+
+
+
 
