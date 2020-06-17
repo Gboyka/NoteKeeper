@@ -1,25 +1,31 @@
 // this is our second screen for editing the notes
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:notekeeper/screens/note_list.dart';
+import 'package:notekeeper/utils/db_helper.dart';
+import 'package:notekeeper/models/note.dart';
+import 'package:sqflite/sqflite.dart';
+import 'dart:async';
+
 
 class NoteEdit extends StatefulWidget {
-  String appBarTitle;
+  final String appBarTitle;
+  final Note note;
 
-  NoteEdit(String title) {
-    appBarTitle = title;
-  }
+  NoteEdit(this.note,this.appBarTitle);
+
+
 
   @override
   State<StatefulWidget> createState() {
-    return NoteEditState(appBarTitle);
+    return NoteEditState(this.note,this.appBarTitle);
   }
 }
 
 class NoteEditState extends State<NoteEdit> {
   String appBarTitle;
-
-  NoteEditState(this.appBarTitle);
+  Note note;
+  NoteEditState(this.note,this.appBarTitle);
 
   TextEditingController title = TextEditingController();
   TextEditingController details = TextEditingController();
