@@ -36,7 +36,7 @@ class NoteEditState extends State<NoteEdit> {
         },
         child: Scaffold(
             appBar: AppBar(
-              //app bar back butto
+              //app bar back button
               // by default back button is present with  goto back screen function
               leading: IconButton(
                   icon: Icon(Icons.arrow_back), //  but we can also
