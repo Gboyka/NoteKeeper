@@ -63,3 +63,16 @@ Sigleton Object->instance which will be initialized only once,throughout the lif
 5. define a function to count total notes in our database.
 
 
+
+# Connecting database operations to Home Screen UI
+Import all the necessary package in both the screens file.
+
+Define priority functions to change color and icons of note according to priority.Add these functions to Note widgets
+
+Define  delete and updateListview function using dbHelper functions
+
+Define a function in dbHelper to convert Map List to Note List to fetch the notes to show it on home screen.
+
+# Implement Navgation and Edit Screen functionality
+Modify the navigationTodetail function add a note obejct as parameter
+
