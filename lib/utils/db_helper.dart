@@ -72,8 +72,7 @@ class DatabaseHelper {
     Database db = await this.database;
     //var result =await db.rawQuery('SELECT * FROM $noteTable order by $colPriority ASC'); //raw query
     // OR we can use
-    var result = await db.query(
-        noteTable, orderBy: '$colPriority ASC'); // inbuilt query function
+    var result = await db.query(noteTable, orderBy: '$colPriority DESC'); // inbuilt query function
     return result; //future object of  list of  map it will be converted later to note object
   }
 

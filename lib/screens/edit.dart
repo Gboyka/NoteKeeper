@@ -33,6 +33,7 @@ class NoteEditState extends State<NoteEdit> {
 
    DatabaseHelper helper=DatabaseHelper(); //singleton instance
 
+  bool check=false;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +85,8 @@ class NoteEditState extends State<NoteEdit> {
                     Padding(
                       padding: EdgeInsets.only(top: 12, bottom: 12),
                       child: TextField(
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
                         controller: details,
                         style: textStyle,
                         onChanged: (value) {
@@ -97,46 +100,28 @@ class NoteEditState extends State<NoteEdit> {
                     ),
                     Row(
                       children: <Widget>[
-                        Container(
-                          width: 65.0,
-                        ),
-                        Text('Primary', style: textStyle),
-                        Container(
-                          width: 120.0,
-                        ),
-                        Text('Secondary', style: textStyle)
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                            child: Radio(
-                          activeColor: Colors.red,
-                          value: 0,
-                          groupValue: note.priority,
-                          onChanged: (newValue) {
-                            setState(() {
-                              setPriority(newValue);
-                            }
-                            );
-                          },
-                        )
-                        ),
-                        Expanded(
-                            child: Radio(
-                          activeColor: Colors.lightGreen,
-                          value: 1,
-                          groupValue: note.priority,
-                          onChanged: (newValue) {
-                            setState(() {
-                              setPriority(newValue);
-                            }
-                            );
-                          },
-                        )
+
+                        Text('Important', style: textStyle),
+
+                             Checkbox(
+                              activeColor: Colors.red,
+                              value: check,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  setPriority(newValue);
+                                  if(check)
+                                    note.priority=1;
+                                  else
+                                    note.priority=0;
+
+                                }
+                                );
+                              },
+
                         )
                       ],
                     ),
+
                     Padding(
                         padding: EdgeInsets.all(25.0),
                         child: Row(
@@ -247,12 +232,12 @@ class NoteEditState extends State<NoteEdit> {
 
   }
 
-  void setPriority(int val)
+  void setPriority(bool val)
   {
-    if(val==1)
-      note.priority=1;
+    if(val)
+      check=true;
     else
-      note.priority=0;
+      check=false;
   }
 
 

@@ -38,9 +38,9 @@ class Note{
       this._description=desc;
       }
 
-      set priority(int radio)
+      set priority(int check)
       {
-        this._priority=radio;
+        this._priority=check;
       }
 
       set date(String newDate) {

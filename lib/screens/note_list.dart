@@ -41,7 +41,7 @@ class NoteListState extends State<NoteList> {
             onPressed: () {
               //add on tapped
               //(title,date,priority)
-              navigateToDetail(Note('','',1),'Add Note');
+              navigateToDetail(Note('','',0),'Add Note');
             },
             backgroundColor: Colors.green,
             tooltip: 'Add Note',
@@ -101,13 +101,10 @@ class NoteListState extends State<NoteList> {
   //returns priority color
   Color getPriorityColor(int priority){
     switch(priority) {
-      case 0:
+      case 1:
         return Colors.red;
         break;
-      case 1:
-        return Colors.yellow;
-        break;
-      default:
+       default:
         return Colors.green;
     }
   }
@@ -118,10 +115,10 @@ class NoteListState extends State<NoteList> {
 
   Icon getPriorityIcon(int priority){
     switch(priority){
-      case 0:
+      case 1:
         return Icon(Icons.play_arrow);
         break;
-      case 1:
+      case 0:
         return Icon(Icons.keyboard_arrow_right);
         break;
       default:
