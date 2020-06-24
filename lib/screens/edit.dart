@@ -170,7 +170,9 @@ class NoteEditState extends State<NoteEdit> {
                             onChanged: (value) {
                               updateTitle();
                             },
+                            textCapitalization: TextCapitalization.sentences,
                             decoration: InputDecoration(
+
                                 labelText: 'Title',
                                 hintText: 'Enter Title',
                                 labelStyle: textStyle,

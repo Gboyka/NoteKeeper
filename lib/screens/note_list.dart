@@ -33,7 +33,7 @@ class NoteListState extends State<NoteList> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text('Notes'),
+          title: Text('Note'),
         ),
         body: getNoteListView(), //Return listView
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
