@@ -8,39 +8,37 @@ import 'package:notekeeper/models/note.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 
-
 class NoteEdit extends StatefulWidget {
   final String appBarTitle;
   final Note note;
 
-  NoteEdit(this.note,this.appBarTitle);
-
-
+  NoteEdit(this.note, this.appBarTitle);
 
   @override
   State<StatefulWidget> createState() {
-    return NoteEditState(this.note,this.appBarTitle);
+    return NoteEditState(this.note, this.appBarTitle);
   }
 }
 
 class NoteEditState extends State<NoteEdit> {
   String appBarTitle;
   Note note;
-  NoteEditState(this.note,this.appBarTitle);
+
+  NoteEditState(this.note, this.appBarTitle);
 
   TextEditingController title = TextEditingController();
   TextEditingController details = TextEditingController();
 
-   DatabaseHelper helper=DatabaseHelper(); //singleton instance
+  DatabaseHelper helper = DatabaseHelper(); //singleton instance
 
-  bool check=false;
-
+  bool check = false;
+  var _formKey = GlobalKey<FormState>(); //validation layer
   @override
   Widget build(BuildContext context) {
     TextStyle textStyle = Theme.of(context).textTheme.subtitle1;
 
-    title.text=note.title;                    //update textFields using controllers
-    details.text=note.description;
+    title.text = note.title; //update textFields using controllers
+    details.text = note.description;
 
     return WillPopScope(
         //when we press the actual back back button
@@ -61,184 +59,212 @@ class NoteEditState extends State<NoteEdit> {
 
               title: Text(appBarTitle, style: TextStyle()),
             ),
-            body: Padding(
-                padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
-                child: ListView(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 12, bottom: 12),
-                      child: TextField(
-                        controller: title,
-                        style: textStyle,
-                        onChanged: (value) {
-                          updateTitle();
-                        },
-                        decoration: InputDecoration(
-                            labelText: 'Title',
-                            labelStyle: textStyle,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            )
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 12, bottom: 12),
-                      child: TextField(
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        controller: details,
-                        style: textStyle,
-                        onChanged: (value) {
-                          updateDescription();},
-                        decoration: InputDecoration(
-                            labelText: 'Details',
-                            labelStyle: textStyle,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0))),
-                      ),
-                    ),
-                    Row(
+            body: Form(
+                key: _formKey,
+                child: Padding(
+                    padding:
+                        EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
+                    child: ListView(
                       children: <Widget>[
+                        Padding(
+                            padding: EdgeInsets.all(25.0),
+                            child: Row(
+                              children: <Widget>[
 
-                        Text('Important', style: textStyle),
 
-                             Checkbox(
+                                Expanded(
+                                    child: RaisedButton(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 15.0, horizontal: 5.0),
+                                  color: Colors.white,
+                                  elevation: 8.0,
+                                  splashColor: Colors.blue,
+                                  textColor:
+                                      Theme.of(context).primaryColorLight,
+                                  child: Icon(
+                                    Icons.delete_forever,
+                                    size: 50.0,
+                                    color: Colors.red,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(75.0)),
+                                  onPressed: () {
+                                    if (_formKey.currentState.validate()) {
+                                      _delete();
+                                    }
+                                    else
+                                      {
+                                        Scaffold.of(context).showSnackBar(
+                                          SnackBar(content: Text("Enter Title"),)
+                                        );
+                                      }
+                                  },
+                                )),
+                                Container(
+                                  width: 40.0,
+                                ),
+                                Expanded(
+                                    child: RaisedButton(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 15.0, horizontal: 5.0),
+                                      color: Colors.white,
+                                      elevation: 8.0,
+                                      splashColor: Colors.black87,
+                                      textColor:
+                                      Theme.of(context).primaryColorLight,
+                                      child: Icon(
+                                        Icons.save,
+                                        size: 50.0,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(75.0),
+                                      ),
+                                      onPressed: () {
+                                        if (_formKey.currentState.validate()) {
+                                          _save();
+                                        }
+                                        else
+                                        {
+                                          Scaffold.of(context).showSnackBar(
+                                              SnackBar(content: Text("Empty Title"),)
+                                          );
+                                        }
+                                      },
+                                    )),
+                              ],
+                            )),
+                        Row(
+                          children: <Widget>[
+                            Text('Important', style: textStyle),
+                            Checkbox(
                               activeColor: Colors.red,
                               value: check,
                               onChanged: (newValue) {
                                 setState(() {
                                   setPriority(newValue);
-                                  if(check)
-                                    note.priority=1;
+                                  if (check)
+                                    note.priority = 1;
                                   else
-                                    note.priority=0;
-
-                                }
-                                );
+                                    note.priority = 0;
+                                });
                               },
-
-                        )
-                      ],
-                    ),
-
-                    Padding(
-                        padding: EdgeInsets.all(25.0),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                                child: RaisedButton(
-                                  padding: EdgeInsets.symmetric(
-                                  vertical: 15.0, horizontal: 5.0),
-                                  color: Colors.white,
-                                   elevation: 8.0,
-                                    splashColor: Colors.black87,
-                                    textColor: Theme.of(context).primaryColorLight,
-                                        child: Icon(
-                                    Icons.save,
-                                    size: 50.0,
-                                    color: Theme.of(context).primaryColor,
-                              ),
-                                  shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(75.0),
-                              ),
-                              onPressed: () {_save();},
-                            )
-                            ),
-                            Container(
-                              width: 40.0,
-                            ),
-                            Expanded(
-                                child: RaisedButton(
-                                  padding: EdgeInsets.symmetric(
-                                  vertical: 15.0, horizontal: 5.0),
-                                  color: Colors.white,
-                                  elevation: 8.0,
-                                  splashColor: Colors.blue,
-                                  textColor: Theme.of(context).primaryColorLight,
-                                  child: Icon(
-                                  Icons.delete_forever,
-                                  size: 50.0,
-                                 color: Colors.red,
-                              ),
-                                  shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(75.0)),
-                              onPressed: () {_delete();},
-                            )
                             ),
                           ],
-                        )
-                    )
-                  ],
-                )
-            )
-        )
-    );
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 12, bottom: 12),
+                          child: TextFormField(
+                            validator: (value)
+                            {
+                              if(value.isEmpty)
+                                {
+                                  return "Enter Title";
+                                }
+                              else
+                                return null;
+                            },
+                            controller: title,
+                            style: textStyle,
+                            onChanged: (value) {
+                              updateTitle();
+                            },
+                            decoration: InputDecoration(
+                                labelText: 'Title',
+                                hintText: 'Enter Title',
+                                labelStyle: textStyle,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                )),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 12, bottom: 12),
+                          child: TextFormField(
+
+                            textAlignVertical: TextAlignVertical(y: 0.5),
+                            keyboardType: TextInputType.multiline,
+                            maxLines: 15,
+                            controller: details,
+                            style: textStyle,
+                            textCapitalization: TextCapitalization.sentences,
+                            onChanged: (value) {
+                              updateDescription();
+                            },
+                            decoration: InputDecoration(
+                                // labelText: 'Details',
+                                hintText: 'Start Writing...',
+                                labelText: 'Details',
+                                labelStyle: textStyle,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0))),
+                          ),
+                        ),
+                      ],
+                    )))));
   }
 
   void moveToLastScreen() {
-    Navigator.pop(context,true); //move to home screen
+    Navigator.pop(context, true); //move to home screen
   }
 
-  void updateTitle(){
-    note.title=title.text;
-  }
-  void updateDescription(){
-    note.description=details.text;
+  void updateTitle() {
+    note.title = title.text;
   }
 
-  void _save() async{
+  void updateDescription() {
+    note.description = details.text;
+  }
 
+  void _save() async {
     moveToLastScreen();
 
-    note.date=DateFormat.yMMMd().format(DateTime.now());
+    note.date = DateFormat.yMMMd().format(DateTime.now());
     int result;
 
-    if(note.id!=null){  //case 1: update operation existing note
-      result=await helper.updateNote(note);
+    if (note.id != null) {
+      //case 1: update operation existing note
+      result = await helper.updateNote(note);
+    } else //case 2: insert operation new note
+    {
+      result = await helper.insertNote(note);
     }
-    else  //case 2: insert operation new note
-      {
-      result=await helper.insertNote(note);
-      }
 
-    if(result!=0) //success
+    if (result != 0) //success
       _showAlert('Status', 'Saved Successfully');
-     else //failed
+    else //failed
       _showAlert('Status', 'Problem Saving Note');
-
-  }
-  void _showAlert(String title,String msg){
-      AlertDialog alertDialog=AlertDialog(
-        title:Text(title),
-        content: Text(msg),
-      );
-      showDialog(context: context,builder:(_)=>alertDialog );
   }
 
-  void _delete() async{   //2 cases
-        //case1. deleting new node that has come after pressing FAB of homescreen
-        //case2. deleting existing note wiht valid ID.
-  moveToLastScreen();
-    if(note.id==null){
-      _showAlert('Status','Oops!No Note Deleted' );
+  void _showAlert(String title, String msg) {
+    AlertDialog alertDialog = AlertDialog(
+      title: Text(title),
+      content: Text(msg),
+    );
+    showDialog(context: context, builder: (_) => alertDialog);
+  }
+
+  void _delete() async {
+    //2 cases
+    //case1. deleting new node that has come after pressing FAB of homescreen
+    //case2. deleting existing note wiht valid ID.
+    moveToLastScreen();
+    if (note.id == null) {
+      _showAlert('Status', 'Oops!No Note Deleted');
     }
 
-    int result=await helper.deleteNote(note.id);
-  if(result!=0)
-    _showAlert('Status','Deleted !' );
-  else
-    _showAlert("Status", 'Something Wrong.!');
-
-  }
-
-  void setPriority(bool val)
-  {
-    if(val)
-      check=true;
+    int result = await helper.deleteNote(note.id);
+    if (result != 0)
+      _showAlert('Status', 'Deleted !');
     else
-      check=false;
+      _showAlert("Status", 'Something Wrong.!');
   }
 
-
+  void setPriority(bool val) {
+    if (val)
+      check = true;
+    else
+      check = false;
+  }
 }
