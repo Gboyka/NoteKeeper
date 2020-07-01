@@ -11,20 +11,22 @@ import 'dart:async';
 class NoteEdit extends StatefulWidget {
   final String appBarTitle;
   final Note note;
+  final bool lock;
 
-  NoteEdit(this.note, this.appBarTitle);
+  NoteEdit(this.note, this.appBarTitle,this.lock);
 
   @override
   State<StatefulWidget> createState() {
-    return NoteEditState(this.note, this.appBarTitle);
+    return NoteEditState(this.note, this.appBarTitle,this.lock);
   }
 }
 
 class NoteEditState extends State<NoteEdit> {
   String appBarTitle;
   Note note;
+  bool lock=false;
 
-  NoteEditState(this.note, this.appBarTitle);
+  NoteEditState(this.note, this.appBarTitle,this.lock);
 
   TextEditingController title = TextEditingController();
   TextEditingController details = TextEditingController();
@@ -39,6 +41,9 @@ class NoteEditState extends State<NoteEdit> {
 
     title.text = note.title; //update textFields using controllers
     details.text = note.description;
+
+    bool locked=lock;
+
 
     return WillPopScope(
         //when we press the actual back back button
@@ -66,75 +71,7 @@ class NoteEditState extends State<NoteEdit> {
                         EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
                     child: ListView(
                       children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.all(25.0),
-                            child: Row(
-                              children: <Widget>[
 
-
-                                Expanded(
-                                    child: RaisedButton(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 15.0, horizontal: 5.0),
-                                  color: Colors.white,
-                                  elevation: 8.0,
-                                  splashColor: Colors.blue,
-                                  textColor:
-                                      Theme.of(context).primaryColorLight,
-                                  child: Icon(
-                                    Icons.delete_forever,
-                                    size: 50.0,
-                                    color: Colors.red,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(75.0)),
-                                  onPressed: () {
-                                    if (_formKey.currentState.validate()) {
-                                      _delete();
-                                    }
-                                    else
-                                      {
-                                        Scaffold.of(context).showSnackBar(
-                                          SnackBar(content: Text("Enter Title"),)
-                                        );
-                                      }
-                                  },
-                                )),
-                                Container(
-                                  width: 40.0,
-                                ),
-                                Expanded(
-                                    child: RaisedButton(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 15.0, horizontal: 5.0),
-                                      color: Colors.white,
-                                      elevation: 8.0,
-                                      splashColor: Colors.black87,
-                                      textColor:
-                                      Theme.of(context).primaryColorLight,
-                                      child: Icon(
-                                        Icons.save,
-                                        size: 50.0,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(75.0),
-                                      ),
-                                      onPressed: () {
-                                        if (_formKey.currentState.validate()) {
-                                          _save();
-                                        }
-                                        else
-                                        {
-                                          Scaffold.of(context).showSnackBar(
-                                              SnackBar(content: Text("Empty Title"),)
-                                          );
-                                        }
-                                      },
-                                    )),
-                              ],
-                            )),
                         Row(
                           children: <Widget>[
                             Text('Important', style: textStyle),
@@ -156,11 +93,13 @@ class NoteEditState extends State<NoteEdit> {
                         Padding(
                           padding: EdgeInsets.only(top: 12, bottom: 12),
                           child: TextFormField(
+                            //autofocus: true,
+                            readOnly: locked,
                             validator: (value)
                             {
                               if(value.isEmpty)
                                 {
-                                  return "Enter Title";
+                                  return "Empty Title";
                                 }
                               else
                                 return null;
@@ -175,6 +114,7 @@ class NoteEditState extends State<NoteEdit> {
 
                                 labelText: 'Title',
                                 hintText: 'Enter Title',
+                                //errorText: 'Empty !',
                                 labelStyle: textStyle,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(5.0),
@@ -182,12 +122,13 @@ class NoteEditState extends State<NoteEdit> {
                           ),
                         ),
                         Padding(
+
                           padding: EdgeInsets.only(top: 12, bottom: 12),
                           child: TextFormField(
-
+                            readOnly: locked,
                             textAlignVertical: TextAlignVertical(y: 0.5),
                             keyboardType: TextInputType.multiline,
-                            maxLines: 15,
+                            maxLines: 9,
                             controller: details,
                             style: textStyle,
                             textCapitalization: TextCapitalization.sentences,
@@ -198,13 +139,88 @@ class NoteEditState extends State<NoteEdit> {
                                 // labelText: 'Details',
                                 hintText: 'Start Writing...',
                                 labelText: 'Details',
+
                                 labelStyle: textStyle,
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(5.0))),
                           ),
                         ),
-                      ],
-                    )))));
+
+                       Padding(
+                           padding: EdgeInsets.only(left:85.0,top:25),
+
+
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                    child: RaisedButton(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 15.0, horizontal: 15.0),
+                                      color: Colors.white,
+                                      elevation: 8.0,
+                                      splashColor: Colors.blue,
+                                      textColor:
+                                      Theme.of(context).primaryColorLight,
+                                      child: Icon(
+                                        Icons.edit,
+                                        size: 50.0,
+                                        color: Colors.red,
+                                      ),
+                                      shape: CircleBorder()
+                                          //borderRadius:
+                                        //  BorderRadius.circular(75.0))
+                                          ,
+                                      onPressed: () {
+                                        if (_formKey.currentState.validate()) {
+                                          _delete();
+                                        }
+                                        else
+                                        {
+                                          Scaffold.of(context).showSnackBar(
+                                              SnackBar(content: Text("Enter Title"),)
+                                          );
+                                        }
+                                      },
+                                    )),
+//                                Container(
+//                                  width: 10.0,
+//                                ),
+                                Expanded(
+                                    child: RaisedButton(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 15.0, horizontal: 15.0),
+                                      color: Colors.white,
+                                      elevation: 8.0,
+                                      splashColor: Colors.black87,
+                                      textColor:
+                                      Theme.of(context).primaryColorLight,
+                                      child: Icon(
+                                        Icons.save,
+                                        size: 50.0,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                      shape: CircleBorder()
+                                       // borderRadius: BorderRadius.circular(75.0),
+                                      ,
+                                      onPressed: () {
+                                        if (_formKey.currentState.validate()) {
+                                          _save();
+                                        }
+                                        else
+                                        {
+                                          Scaffold.of(context).showSnackBar(
+                                              SnackBar(content: Text("Empty Title"),)
+                                          );
+                                        }
+                                      },
+                                    )),
+                              ],
+                            )),],
+                    )
+                )
+            )
+        )
+    );
   }
 
   void moveToLastScreen() {
@@ -246,6 +262,13 @@ class NoteEditState extends State<NoteEdit> {
     );
     showDialog(context: context, builder: (_) => alertDialog);
   }
+
+  void _editNote()
+  {
+
+
+  }
+
 
   void _delete() async {
     //2 cases
